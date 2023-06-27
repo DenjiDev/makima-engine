@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Tensor2D } from '@tensorflow/tfjs-node';
 import { respondOptions } from './models/option/options';
 import { genericTensor } from './models/tensor/generic.tensor';
-import { cosineSimilarity, countWords } from './utils';
+import { cosineSimilarity } from './utils';
 
 
 
@@ -11,23 +11,22 @@ import { cosineSimilarity, countWords } from './utils';
 
 @Injectable()
 export class EngineService {
-  blogPostsTensor: Promise<Tensor2D>
+  answerOptions: Promise<Tensor2D>
   private options: any[]
-  constructor() {
+  constructor(@Inject('MAKIMA') private readonly client: ClientProxy) {
     this.options = respondOptions.map((option) => option.message)
-    this.blogPostsTensor = genericTensor(this.options);
+    this.answerOptions = genericTensor(this.options);
+    this.client.connect()
   }
 
-  async predict(data: { message: { body: string }, client: any }) {
+  async predict(data: { message: { body: string } }) {
     const { message } = data
     const query = message.body.split(" ").slice(1).join(" ")
     let MAX_RESULTS = 1;
-
-    MAX_RESULTS = countWords(query) > 1 ? MAX_RESULTS : 2
     const userInputTensor = await genericTensor(query)
 
     const inputVector = await userInputTensor.array();
-    const dataVector = await (await this.blogPostsTensor).array();
+    const dataVector = await (await this.answerOptions).array();
 
     const userQueryVector = inputVector[0];
 
@@ -42,7 +41,8 @@ export class EngineService {
 
     }).sort((a, b) => b.similarity - a.similarity).slice(0, MAX_RESULTS);
 
-    return predictions
+    Logger.log(predictions)
+    this.client.emit('sender', JSON.stringify({ data: { predictions, message } }));
   }
 
 

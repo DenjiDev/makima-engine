@@ -16,8 +16,9 @@ async function bootstrap() {
         urls: [process.env.RABBIT_URL],
         queue: 'engine_queue',
         queueOptions: {
-          durable: false
+          durable: false,
         },
+        noAck: false
       },
     }
   );

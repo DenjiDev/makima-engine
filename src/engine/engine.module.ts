@@ -15,10 +15,10 @@ import { EngineController } from './engine.controller';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBIT_URL],
-          queue: 'engine_queue',
+          queue: 'sender_queue',
           queueOptions: {
-            durable: false
-          }
+            durable: false,
+          },
         }
       },
     ]),

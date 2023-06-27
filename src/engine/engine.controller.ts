@@ -1,5 +1,5 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, MessagePattern } from '@nestjs/microservices';
+import { Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { EngineService } from './engine.service';
 
 @Controller()
@@ -8,8 +8,12 @@ export class EngineController {
 
     }
     @EventPattern('engine')
-    async handlePredictEvent(data: { message: { body: string }, client: any }) {
-        return this.engineService.predict(data)
+    async handlePredictEvent(@Payload() data: any, @Ctx() context: RmqContext) {
+        const dataToSend = JSON.parse(data)
+        this.engineService.predict(dataToSend.data)
+        const channel = context.getChannelRef();
+        const originalMessage = context.getMessage();
+        channel.ack(originalMessage);
     }
 
 }

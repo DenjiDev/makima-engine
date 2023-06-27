@@ -15,5 +15,3 @@ const vectorMagnitude = (vector: number[]) => {
 export const cosineSimilarity = (vector1: number[], vector2: number[]) => {
     return dotProduct(vector1, vector2) / (vectorMagnitude(vector1) * vectorMagnitude(vector2));
 };
-
-export const countWords = (data: string) => data.split(" ").length;
