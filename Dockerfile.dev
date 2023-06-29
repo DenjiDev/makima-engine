@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install -g @nestjs/cli --ignore-scripts
+RUN npm install --ignore-scripts @nestjs/cli 
+
 
 RUN yarn install
 
