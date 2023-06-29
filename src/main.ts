@@ -2,12 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { Logger } from '@nestjs/common';
-import { otelSDK } from './tracing';
+const tracer = require('./tracer')
 
 const loggerInstance = new Logger('Bootstrap')
 
 async function bootstrap() {
-  await otelSDK.start()
+  await tracer.start();
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
@@ -19,11 +19,14 @@ async function bootstrap() {
           durable: false,
         },
         noAck: false
-      },
-    }
+      }
+    },
   );
+
+
   await app.listen();
   loggerInstance.log(`Makima Engine MS running!`)
 }
 
 bootstrap().catch((error) => loggerInstance.error(error))
+
