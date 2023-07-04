@@ -100,4 +100,4 @@ makima-ms:
   variables:
     secret:
       - name: RABBIT_URL
-        value: YW1xcDovL2d1ZXN0Omd1ZXN0QHJhYmJpdG1xLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWw6NTY3Mg==
+        value: YW1xcDovL2d1ZXN0Omd1ZXN0QHJhYmJpdG1xLnJhYmJpdHMuc3ZjLmNsdXN0ZXIubG9jYWw6NTY3Mg==
