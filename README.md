@@ -34,7 +34,7 @@ $ yarn infra:down
 ```
 
 ## Run in local with docker-compose
-
+##
 start core services
 ```bash
 $ yarn infra:up
