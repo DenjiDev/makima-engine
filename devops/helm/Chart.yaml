@@ -7,4 +7,4 @@ appVersion: "0.1.0"
 dependencies:
   - name: makima-ms
     repository: https://denjidev.github.io/makima-ms/index.yaml
-    version: 0.1.0
+    version: 0.2.0
