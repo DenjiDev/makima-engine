@@ -21,7 +21,8 @@ export class EngineService {
 
   async predict(data: { message: { body: string } }) {
     const { message } = data
-    const query = message.body.split(" ").slice(1).join(" ")
+    let query = message?.body?.split(" ").slice(1).join(" ") || "menu"
+
     let MAX_RESULTS = 1;
     const userInputTensor = await genericTensor(query)
 
