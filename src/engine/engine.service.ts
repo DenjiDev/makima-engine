@@ -21,8 +21,7 @@ export class EngineService {
 
   async predict(data: { message: { body: string } }) {
     const { message } = data
-    let query = message?.body?.split(" ").slice(1).join(" ") || "menu"
-
+    let query = this.sanitizeQuery(message)
     let MAX_RESULTS = 1;
     const userInputTensor = await genericTensor(query)
 
@@ -46,6 +45,13 @@ export class EngineService {
     this.client.emit('sender', JSON.stringify({ data: { predictions, message } }));
   }
 
+  sanitizeQuery(message: { body: string }) {
+    let query = message?.body?.split(" ").slice(1).join(" ")
+    if (query.length === 0) {
+      query = "menu"
+    }
+    return query
+  }
 
 }
 
