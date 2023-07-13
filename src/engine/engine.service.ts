@@ -1,26 +1,30 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Injectable, Logger } from '@nestjs/common';
 import { Tensor2D } from '@tensorflow/tfjs-node';
 import { respondOptions } from './models/option/options';
 import { genericTensor } from './models/tensor/generic.tensor';
 import { cosineSimilarity } from './utils';
+import { InjectQueue, OnQueueActive, Process, Processor } from '@nestjs/bull';
+import { Job, Queue } from 'bull';
 
 
 
 
 
 @Injectable()
+@Processor('engine')
 export class EngineService {
   answerOptions: Promise<Tensor2D>
   private options: any[]
-  constructor(@Inject('MAKIMA') private readonly client: ClientProxy) {
+  constructor(@InjectQueue('sender') private queue: Queue) {
     this.options = respondOptions.map((option) => option.message)
     this.answerOptions = genericTensor(this.options);
-    this.client.connect()
   }
 
-  async predict(data: { message: { body: string } }) {
-    const { message } = data
+  @Process("predict")
+  @OnQueueActive()
+  async predict(job: Job) {
+    const dataToSend = JSON.parse(job.data)
+    const { message } = dataToSend.data
     let query = this.sanitizeQuery(message)
     let MAX_RESULTS = 1;
     const userInputTensor = await genericTensor(query)
@@ -42,7 +46,8 @@ export class EngineService {
     }).sort((a, b) => b.similarity - a.similarity).slice(0, MAX_RESULTS);
 
     Logger.log(predictions)
-    this.client.emit('sender', JSON.stringify({ data: { predictions, message } }));
+    this.sendEvent('sender', JSON.stringify({ data: { predictions, message } }))
+    Logger.log(`Event sent to sender queue with data: ${JSON.stringify(message)}`)
   }
 
   sanitizeQuery(message: { body: string }) {
@@ -53,6 +58,18 @@ export class EngineService {
     return query
   }
 
+
+  async sendEvent(pattern: string, data: any) {
+    try {
+      await this.queue.add(pattern, data,
+        {
+          attempts: 5,
+          backoff: 8000,
+        })
+    } catch (error) {
+      Logger.error(error)
+    }
+  }
 }
 
 
