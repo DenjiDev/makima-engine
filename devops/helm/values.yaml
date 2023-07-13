@@ -90,6 +90,6 @@ makima-ms:
         value: "6379"
     secret:
       - name: REDIS_HOST
-        value: cmVkaXMucmVkaXMuc3ZjLmNsdXN0ZXIubG9jYWw=
+        value: cmVkaXMtMC5yZWRpcy5yZWRpcy5zdmMuY2x1c3Rlci5sb2NhbA==
       - name: REDIS_PASSWORD
         value: MTMwODAwQWQ=
