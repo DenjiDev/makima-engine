@@ -1,30 +1,19 @@
 import { Module } from '@nestjs/common';
 import { EngineService } from './engine.service';
-
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
-import { EngineController } from './engine.controller';
+import { BullModule } from '@nestjs/bull';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ClientsModule.register([
-      {
-        name: 'MAKIMA',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RABBIT_URL],
-          queue: 'sender_queue',
-          queueOptions: {
-            durable: false,
-          },
-        }
-      },
-    ]),
-
+    BullModule.registerQueue({
+      name: 'engine',
+    }),
+    BullModule.registerQueue({
+      name: 'sender',
+    })
   ],
-  controllers: [EngineController],
   providers: [EngineService]
 })
 export class EngineModule { }
