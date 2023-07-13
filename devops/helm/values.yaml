@@ -7,7 +7,7 @@ makima-ms:
     repository: qzzdocker24/makima-engine
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "b0045a9f7949bc46ad5944de4a5bfced46a86cc0"
+    tag: "8ac78a5fa1e14004964254a0b1d51f34529ee473"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: "makima-engine"
@@ -90,6 +90,6 @@ makima-ms:
         value: "6379"
     secret:
       - name: REDIS_HOST
-        value: cmVkaXMucmVkaXMuc3ZjLmNsdXN0ZXIubG9jYWw=
+        value: cmVkaXMtMC5yZWRpcy5yZWRpcy5zdmMuY2x1c3Rlci5sb2NhbA==
       - name: REDIS_PASSWORD
         value: MTMwODAwQWQ=
